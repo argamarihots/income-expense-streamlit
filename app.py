@@ -7,8 +7,9 @@ import matplotlib.pyplot as plt
 # =========================
 # CONFIG (CONNECTING TO DATABASE)
 # =========================
-SUPABASE_URL = st.secrets["https://xwagkyijvshtswqlhhad.supabase.co"]
-SUPABASE_KEY = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YWdreWlqdnNodHN3cWxoaGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTIxOTcsImV4cCI6MjA4OTQ4ODE5N30.TzlsgET51JzMG8d2daS6SX3Lr7OFXLJHPgJiDtymJUE"]
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # =========================
@@ -79,7 +80,7 @@ def main():
     # 🔐 PASSWORD PROTECTION 
     password = st.text_input("Input Password", type="password")
     if password: 
-        if password != st.secrets["Juntak389"]:
+        if password != st.secrets["APP_PASSWORD"]:
             st.warning("Wrong Password!")
             st.stop()
     else:
@@ -166,7 +167,7 @@ def main():
     if not df.empty:
         df["date"] = pd.to_datetime(df["date"], format="%d/%m/%Y", errors="coerce")
         df = df.dropna(subset=["date","amount","category","account"])
-        df["date"] = df["date"].dt.date  # ✅ FIX HILANGIN JAM
+        df["date"] = df["date"].dt.date 
         df = df.sort_values("date")
 
     # =========================
@@ -235,7 +236,7 @@ def main():
             aggfunc="sum"
         ).fillna(0)
 
-        bar_income.index = bar_income.index.astype(str)  # ✅ FIX BUG STREAMLIT
+        bar_income.index = bar_income.index.astype(str)  
 
         st.bar_chart(bar_income)
 
@@ -268,7 +269,6 @@ def main():
             )
             st.pyplot(fig)
 
-        # ✅ STACKED BAR FIX
         bar_exp = expense_df.pivot_table(
             index="date",
             columns="category",
@@ -276,7 +276,7 @@ def main():
             aggfunc="sum"
         ).fillna(0).abs()
 
-        bar_exp.index = bar_exp.index.astype(str)  # ✅ FIX BUG STREAMLIT
+        bar_exp.index = bar_exp.index.astype(str) 
 
         st.bar_chart(bar_exp)
 
@@ -290,8 +290,7 @@ def main():
     if not df.empty:
         acc = df.groupby("account", as_index=False)["amount"].sum()
         acc = acc.set_index("account")
-        acc.index = acc.index.astype(str)  # ✅ FIX BUG
-
+        acc.index = acc.index.astype(str)
         st.bar_chart(acc)
 
     # =========================
