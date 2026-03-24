@@ -171,7 +171,7 @@ def main():
         t_col1, t_col2 = st.columns(2)
         with t_col1:
             transfer_from = st.selectbox("From Account", ["CASH", "BANK"])
-            transfer_amount =st.number_input("Transfer Amount", min_value=0.0, step=1000.0, format="%.0f",key="amt") 
+            transfer_amount =st.number_input("Transfer Amount", min_value=0.0, step=1000.0, format="%.0f",key="transfer_amt") 
             
         with t_col2:
             transfer_to = st.selectbox("To Account", ["BANK", "CASH"]) # Default beda biar gak error
