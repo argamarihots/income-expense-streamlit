@@ -7,10 +7,16 @@ import matplotlib.pyplot as plt
 # =========================
 # CONFIG (CONNECTING TO DATABASE)
 # =========================
-SUPABASE_URL = st.secrets["SUPABASE_URL"]
-SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
-APP_PASSWORD = st.secrets["APP_PASSWORD"]
+#SUPABASE_URL = st.secrets["SUPABASE_URL"]
+#SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+#APP_PASSWORD = st.secrets["APP PASSWORD"]
+#supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+SUPABASE_URL = "https://xwagkyijvshtswqlhhad.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YWdreWlqdnNodHN3cWxoaGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTIxOTcsImV4cCI6MjA4OTQ4ODE5N30.TzlsgET51JzMG8d2daS6SX3Lr7OFXLJHPgJiDtymJUE"
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+APP_PASSWORD= "Juntak389"
 
 # =========================
 # LOAD DATA
@@ -57,6 +63,10 @@ all_categories = sorted(list(set(income_categories + expense_categories)))
 # =========================
 def main():
     # INITIALIZE
+    if "success_msg" not in st.session_state:
+        st.session_state.success_msg = None
+    st.title("💰 Income Expense Tracker")
+    
     if "show_success" not in st.session_state:
         st.session_state.show_success = False
         
@@ -75,12 +85,11 @@ def main():
     if "delete_warning" not in st.session_state:
         st.session_state.delete_warning = False
         
-    st.title("💰 Income Expense Tracker")
     
     # 🔐 PASSWORD PROTECTION 
     password = st.text_input("Input Password", type="password")
     if password: 
-        if password != st.secrets["APP_PASSWORD"]:
+        if password != APP_PASSWORD: #st.secrets["APP_PASSWORD"
             st.warning("Wrong Password!")
             st.stop()
     else:
@@ -106,7 +115,7 @@ def main():
     
         st.session_state.form_reset = False
 
-    with st.form("form"):
+    with st.form("form", clear_on_submit=True):
         col1, col2 = st.columns(2)
 
         with col1:
@@ -158,7 +167,62 @@ def main():
 
     st.markdown("---") 
     
+    # =========================
+    # TRANSFER FORM (BARU)
+    # =========================
+    st.subheader("💸 Transfer Between Accounts")
 
+    # Gunakan akun dari form utama
+    with st.form("transfer_form", clear_on_submit=True): 
+        t_col1, t_col2 = st.columns(2)
+        with t_col1:
+            transfer_from = st.selectbox("From Account", ["CASH", "BANK"])
+            transfer_amount = st.number_input("Amount", min_value=0.0, step=1000.0, value=0.0) # value=0.0 biar awal buka kosong
+            
+        with t_col2:
+            transfer_to = st.selectbox("To Account", ["BANK", "CASH"]) # Default beda biar gak error
+            transfer_notes = st.text_input("Notes (optional)")
+        
+        transfer_submit = st.form_submit_button("Confirm Transfer")
+
+        if transfer_submit:
+            if transfer_from == transfer_to:
+                st.error("❌ From and To Account cannot be the same!")    
+            elif transfer_amount <= 0:
+                st.error("❌ Amount must be greater than 0!")    
+            else:
+             # --- PROSES SIMPAN DATA DI SINI (SEBELUM RERUN) ---
+                df_temp = load_data()
+                next_no = 1
+                if not df_temp.empty:
+                    next_no = int(df_temp["no"].max()) + 1
+                # 1. Simpan Minus (Dari Akun Asal)
+                insert_data({
+                    "no": next_no,
+                    "date": datetime.today().strftime("%d/%m/%Y"),
+                    "income_expense": "TRANSFER",
+                    "category": "Transfer",
+                    "subcategory": f"To {transfer_to}",
+                    "account": transfer_from,
+                    "amount": -abs(transfer_amount),
+                    "notes": transfer_notes
+                })
+                
+                # 2. Simpan Plus (Ke Akun Tujuan)
+                insert_data({
+                    "no": next_no + 1,
+                    "date": datetime.today().strftime("%d/%m/%Y"),
+                    "income_expense": "TRANSFER",
+                    "category": "Transfer",
+                    "subcategory": f"From {transfer_from}",
+                    "account": transfer_to,
+                    "amount": abs(transfer_amount),
+                    "notes": transfer_notes
+                })
+                
+                # Set label sukses lalu refresh
+                st.session_state.success_msg = "transfer_success"
+                st.rerun()
     # =========================
     # LOAD ULANG
     # =========================
@@ -302,33 +366,21 @@ def main():
     # =========================
     # DELETE
     # =========================
-    st.subheader("Delete Data")
-    
-    #Reset Input
-    if st.session_state.get("delete_reset", False):
-        st.session_state.delete_no = ""
-        st.session_state.delete_reset = False
-    # input
-    delete_no = st.text_input("Input no", key="delete_no")
-    
-    delete_clicked = st.button("Delete")
-    # logic Click
-    if delete_clicked:
-        if delete_no:
-            delete_data(int(delete_no))
-
-        st.session_state.delete_success = True
-        st.session_state.delete_reset = True
-        st.rerun()
-    
-    
-    if st.session_state.get("delete_warning", False):
-        st.warning("Please Input Number!")
-        st.session_state.delete_warning = False
-
-    if st.session_state.get("delete_success", False):
-        st.success("Data Successfully Deleted!")
-        st.session_state.delete_success = False
+    with st.form("delete_form", clear_on_submit=True):
+            delete_no = st.number_input("Input no to delete", min_value=0, step=1, value=0)
+            delete_clicked = st.form_submit_button("Delete Now")
+            
+            if delete_clicked:
+                if delete_no > 0:
+                    delete_data(int(delete_no))
+                    st.session_state.success_msg = "delete_success"
+                    st.rerun()
+                else:
+                    st.warning("Please input a valid number!")
+                    
+    if st.session_state.get("success_msg") == "delete_success":
+        st.success("🗑️ Data Successfully Deleted!")
+        st.session_state.success_msg = None
 
 # =========================
 # RUN
