@@ -7,16 +7,10 @@ import matplotlib.pyplot as plt
 # =========================
 # CONFIG (CONNECTING TO DATABASE)
 # =========================
-#SUPABASE_URL = st.secrets["SUPABASE_URL"]
-#SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
-#APP_PASSWORD = st.secrets["APP PASSWORD"]
-#supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-SUPABASE_URL = "https://xwagkyijvshtswqlhhad.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YWdreWlqdnNodHN3cWxoaGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTIxOTcsImV4cCI6MjA4OTQ4ODE5N30.TzlsgET51JzMG8d2daS6SX3Lr7OFXLJHPgJiDtymJUE"
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
+APP_PASSWORD = st.secrets["APP PASSWORD"]
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-
-APP_PASSWORD= "Juntak389"
 
 # =========================
 # LOAD DATA
@@ -89,7 +83,7 @@ def main():
     # 🔐 PASSWORD PROTECTION 
     password = st.text_input("Input Password", type="password")
     if password: 
-        if password != APP_PASSWORD: #st.secrets["APP_PASSWORD"
+        if password != st.secrets["APP_PASSWORD"]:
             st.warning("Wrong Password!")
             st.stop()
     else:
@@ -132,7 +126,7 @@ def main():
 
         with col2:
             account = st.selectbox("Account", ["CASH", "BANK"], key="acc")
-            amount = st.number_input("Amount", min_value=0.0, step=1000.0, key="amt")
+            amount = st.number_input("Amount", min_value=0.0, step=1000.0, format="%.0f",key="amt") 
             notes = st.text_area("Notes", key="notes")
 
         submit = st.form_submit_button("Submit")
@@ -177,7 +171,7 @@ def main():
         t_col1, t_col2 = st.columns(2)
         with t_col1:
             transfer_from = st.selectbox("From Account", ["CASH", "BANK"])
-            transfer_amount = st.number_input("Amount", min_value=0.0, step=1000.0, value=0.0) # value=0.0 biar awal buka kosong
+            transfer_amount =st.number_input("Transfer Amount", min_value=0.0, step=1000.0, format="%.0f",key="amt") 
             
         with t_col2:
             transfer_to = st.selectbox("To Account", ["BANK", "CASH"]) # Default beda biar gak error
@@ -361,7 +355,12 @@ def main():
     # TABLE
     # =========================
     st.subheader("Transaction Data")
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(
+        df.style.format({
+            "amount": "{:,.0f}" # Menambahkan koma/titik sebagai pemisah ribuan
+        }), 
+        use_container_width=True
+    )
 
     # =========================
     # DELETE
