@@ -298,7 +298,7 @@ def main():
 
         st.bar_chart(bar_income)
 
-        st.dataframe(income_df)
+        st.dataframe(income_df.style.format({"amount": "{:,.0f}"}), hide_index=True)
 
     # =========================
     # EXPENSE
@@ -338,7 +338,7 @@ def main():
 
         st.bar_chart(bar_exp)
 
-        st.dataframe(expense_df)
+        st.dataframe(expense_df.style.format({"amount": "{:,.0f}"}), hide_index=True)
 
     # =========================
     # ACCOUNT
