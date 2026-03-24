@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 # =========================
 # CONFIG (CONNECTING TO DATABASE)
 # =========================
-SUPABASE_URL = "https://xwagkyijvshtswqlhhad.supabase.co".strip()
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YWdreWlqdnNodHN3cWxoaGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTIxOTcsImV4cCI6MjA4OTQ4ODE5N30.TzlsgET51JzMG8d2daS6SX3Lr7OFXLJHPgJiDtymJUE".strip()
+SUPABASE_URL = st.secrets["https://xwagkyijvshtswqlhhad.supabase.co"]
+SUPABASE_KEY = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh3YWdreWlqdnNodHN3cWxoaGFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5MTIxOTcsImV4cCI6MjA4OTQ4ODE5N30.TzlsgET51JzMG8d2daS6SX3Lr7OFXLJHPgJiDtymJUE"]
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # =========================
@@ -79,7 +79,7 @@ def main():
     # 🔐 PASSWORD PROTECTION 
     password = st.text_input("Input Password", type="password")
     if password: 
-        if password != "Juntak389":
+        if password != st.secrets["Juntak389"]:
             st.warning("Wrong Password!")
             st.stop()
     else:
