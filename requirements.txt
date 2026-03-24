@@ -1,5 +1,7 @@
+pip>=26.0.1
+setuptools>=67.0.0
 streamlit==1.32.0
 pandas==2.0.3
 Pillow==10.1.0
 matplotlib==3.7.2
-supabase==1.4.3
+supabase-py>=1.4.3
