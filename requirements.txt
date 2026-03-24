@@ -4,4 +4,4 @@ streamlit==1.32.0
 pandas==2.0.3
 Pillow==10.1.0
 matplotlib==3.7.2
-supabase-py>=1.4.3
+supabase
