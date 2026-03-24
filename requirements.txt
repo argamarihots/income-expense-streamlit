@@ -1,0 +1,8 @@
+streamlit==1.32.0
+pandas==2.2.1
+supabase==2.3.4
+python-dateutil==2.9.0
+requests==2.32.5
+protobuf==4.25.8
+pydantic==2.12.5
+pydantic-core==2.41.5
