@@ -286,7 +286,7 @@ def main():
             )
             st.pyplot(fig)
 
-        # ✅ STACKED BAR FIX
+        # STACKED BAR
         bar_income = income_df.pivot_table(
             index="date",
             columns="category",
@@ -296,7 +296,9 @@ def main():
 
         bar_income.index = bar_income.index.astype(str)  
 
-        st.bar_chart(bar_income)
+        fig_inc = px.bar(bar_income.reset_index(), x="date", y=bar_income.columns)
+        fig_inc.update_traces(hovertemplate="%{y:,.0f}") 
+        st.plotly_chart(fig_inc, use_container_width=True)
 
         st.dataframe(income_df.style.format({"amount": "{:,.0f}"}), hide_index=True)
 
@@ -326,7 +328,7 @@ def main():
                 ylabel=""
             )
             st.pyplot(fig)
-
+        #Stacked bar
         bar_exp = expense_df.pivot_table(
             index="date",
             columns="category",
@@ -336,7 +338,9 @@ def main():
 
         bar_exp.index = bar_exp.index.astype(str) 
 
-        st.bar_chart(bar_exp)
+        fig_exp = px.bar(bar_exp.reset_index(), x="date", y=bar_exp.columns)
+        fig_exp.update_traces(hovertemplate="%{y:,.0f}")
+        st.plotly_chart(fig_exp, use_container_width=True)
 
         st.dataframe(expense_df.style.format({"amount": "{:,.0f}"}), hide_index=True)
 
@@ -347,9 +351,9 @@ def main():
 
     if not df.empty:
         acc = df.groupby("account", as_index=False)["amount"].sum()
-        acc = acc.set_index("account")
-        acc.index = acc.index.astype(str)
-        st.bar_chart(acc)
+        fig_acc = px.bar(acc, x="account", y="amount")
+        fig_acc.update_traces(hovertemplate="%{y:,.0f}")
+        st.plotly_chart(fig_acc, use_container_width=True)
 
     # =========================
     # TABLE
