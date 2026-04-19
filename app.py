@@ -162,7 +162,7 @@ def main():
     st.markdown("---") 
     
     # =========================
-    # TRANSFER FORM (BARU)
+    # TRANSFER FORM
     # =========================
     st.subheader("💸 Transfer Between Accounts")
 
