@@ -230,7 +230,6 @@ def main():
     # =========================
     st.subheader("💸 Transfer Between Accounts")
 
-    # Gunakan akun dari form utama
     with st.form("transfer_form", clear_on_submit=True): 
         t_col1, t_col2 = st.columns(2)
         with t_col1:
