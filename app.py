@@ -37,7 +37,7 @@ def load_data():
     return df
 
 def insert_data(data):
-     """
+    """
     Insert new data into the 'transactions' table.
 
     Args:
@@ -435,7 +435,7 @@ def main():
             values="amount",
             aggfunc="sum"
         ).fillna(0).abs()
-'        
+        
         # Convert date index to string for better display
         bar_exp.index = bar_exp.index.astype(str) 
 
