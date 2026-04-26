@@ -458,7 +458,7 @@ def main():
     # Display full transaction table with formatted amount
     st.dataframe(
         df.style.format({
-            "amount": "{:,.0f}" # Menambahkan koma/titik sebagai pemisah ribuan
+            "amount": "{:,.0f}"
         }), 
         use_container_width=True
     )
