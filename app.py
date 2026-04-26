@@ -232,16 +232,6 @@ def main():
 
     # Gunakan akun dari form utama
     with st.form("transfer_form", clear_on_submit=True): 
-        """
-        Transfer form to move balance between accounts (e.g., CASH ↔ BANK).
-            Features:
-                - User selects source (From) and destination (To) account
-                - Inputs transfer amount and optional notes
-                - Validates input before saving
-                - Records double-entry transactions:
-                    1. Negative amount from source account
-                    2. Positive amount to destination account
-        """
         t_col1, t_col2 = st.columns(2)
         with t_col1:
             transfer_from = st.selectbox("From Account", ["CASH", "BANK"])
